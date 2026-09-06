@@ -8,20 +8,35 @@ import { Hero } from '@/components/portfolio/hero'
 import { Navbar } from '@/components/portfolio/navbar'
 import { Projects } from '@/components/portfolio/projects'
 import { Skills } from '@/components/portfolio/skills'
-import { certificates, experiences, profile, projects } from '@/lib/portfolio-data'
+import {
+  getProfile,
+  getProjects,
+  getSkillCategories,
+  getExperiences,
+  getCertificates,
+} from '@/lib/db/portfolio-service'
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [profileData, projectsData, skillData, experienceData, certificateData] =
+    await Promise.all([
+      getProfile(),
+      getProjects(),
+      getSkillCategories(),
+      getExperiences(),
+      getCertificates(),
+    ])
+
   return (
     <div className="relative min-h-svh">
       <Navbar />
       <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Projects projects={projects} />
-        <ExperienceTimeline experiences={experiences} />
+        <Hero profile={profileData} />
+        <About profile={profileData} />
+        <Skills categories={skillData} />
+        <Projects projects={projectsData} />
+        <ExperienceTimeline experiences={experienceData} />
         <Achievements />
-        <Certifications certificates={certificates} />
+        <Certifications certificates={certificateData} />
         <Contact />
       </main>
       <Footer />
@@ -31,11 +46,11 @@ export default function HomePage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Person',
-            name: profile.name,
-            jobTitle: profile.title,
-            email: `mailto:${profile.email}`,
-            address: { '@type': 'PostalAddress', addressLocality: profile.location },
-            sameAs: [profile.githubUrl, profile.linkedinUrl],
+            name: profileData.name,
+            jobTitle: profileData.title,
+            email: `mailto:${profileData.email}`,
+            address: { '@type': 'PostalAddress', addressLocality: profileData.location },
+            sameAs: [profileData.githubUrl, profileData.linkedinUrl],
           }),
         }}
       />

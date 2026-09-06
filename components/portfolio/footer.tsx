@@ -18,6 +18,14 @@ export function Footer() {
           <a href={`mailto:${profile.email}`} aria-label="Email" className="text-muted-foreground transition-colors hover:text-primary">
             <Mail className="size-5" />
           </a>
+          <a
+            href="/admin"
+            aria-label="Admin Dashboard"
+            className="text-muted-foreground/40 transition-colors hover:text-primary"
+            title="Admin Login"
+          >
+            <span className="font-mono text-xs">•</span>
+          </a>
         </div>
       </div>
     </footer>

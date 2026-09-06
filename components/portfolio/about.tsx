@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react'
 import { Brain, Database, GraduationCap, LineChart } from 'lucide-react'
-import { profile } from '@/lib/portfolio-data'
+import { profile as defaultProfile, type Profile } from '@/lib/portfolio-data'
 import { Section, SectionHeading } from './section'
 
 const focusAreas = [
@@ -23,7 +23,7 @@ const cards = [
   { icon: GraduationCap, title: 'Foundations', text: 'Strong statistics and math underpinning every model decision.' },
 ]
 
-export function About() {
+export function About({ profile = defaultProfile }: { profile?: Profile }) {
   return (
     <Section id="about">
       <SectionHeading

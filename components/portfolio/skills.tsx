@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { skillCategories } from '@/lib/portfolio-data'
+import { skillCategories as defaultSkillCategories, type SkillCategory } from '@/lib/portfolio-data'
 import { Section, SectionHeading } from './section'
 
 const iconByName: Record<string, LucideIcon> = {
@@ -24,7 +24,7 @@ const iconByName: Record<string, LucideIcon> = {
   AI: Sparkles,
 }
 
-export function Skills() {
+export function Skills({ categories = defaultSkillCategories }: { categories?: SkillCategory[] }) {
   return (
     <Section id="skills" className="border-y border-border/60 bg-card/20">
       <SectionHeading
@@ -34,7 +34,7 @@ export function Skills() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {skillCategories.map((category, i) => {
+        {categories.map((category, i) => {
           const Icon = iconByName[category.name] ?? Code2
           return (
             <motion.div

@@ -1,12 +1,6 @@
 import { NextResponse } from 'next/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
-/**
- * Contact form endpoint.
- *
- * For now this validates and logs the message. Once the database is wired,
- * persist to the `messages` table here, and/or forward to an email service
- * (e.g. Resend) using a server-side API key from an environment variable.
- */
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -24,7 +18,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message is too long.' }, { status: 400 })
     }
 
-    console.log('[v0] New contact message:', { name, email, length: message.length })
+    // Try saving to Supabase if connected
+    try {
+      const supabase = await createServerSupabaseClient()
+      if (supabase) {
+        await supabase.from('messages').insert([
+          {
+            name,
+            email,
+            message,
+            created_at: new Date().toISOString(),
+          },
+        ])
+      }
+    } catch (dbError) {
+      console.error('Failed to save message to Supabase:', dbError)
+    }
 
     return NextResponse.json({ ok: true })
   } catch {

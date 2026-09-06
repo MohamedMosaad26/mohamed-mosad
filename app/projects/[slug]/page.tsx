@@ -5,9 +5,11 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, ExternalLink, Github, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Footer } from '@/components/portfolio/footer'
-import { projects } from '@/lib/portfolio-data'
+import { getProjectBySlug, getProjects } from '@/lib/db/portfolio-service'
+import type { Project } from '@/lib/portfolio-data'
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const projects = await getProjects()
   return projects.map((p) => ({ slug: p.slug }))
 }
 
@@ -17,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const project = projects.find((p) => p.slug === slug)
+  const project = await getProjectBySlug(slug)
   if (!project) return { title: 'Project not found' }
   return {
     title: project.title,
@@ -30,7 +32,7 @@ export async function generateMetadata({
   }
 }
 
-const detailSections: { key: keyof NonNullable<(typeof projects)[number]['details']>; label: string }[] = [
+const detailSections: { key: keyof Project['details']; label: string }[] = [
   { key: 'problemStatement', label: 'Problem Statement' },
   { key: 'dataset', label: 'Dataset' },
   { key: 'dataPreprocessing', label: 'Data Preprocessing' },
@@ -49,10 +51,10 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const project = projects.find((p) => p.slug === slug)
+  const project = await getProjectBySlug(slug)
   if (!project) notFound()
 
-  const availableSections = detailSections.filter((s) => project.details[s.key])
+  const availableSections = detailSections.filter((s) => project.details?.[s.key])
 
   return (
     <div className="relative min-h-svh">
@@ -109,7 +111,7 @@ export default async function ProjectDetailPage({
           </div>
         )}
 
-        {project.metrics.length > 0 && (
+        {project.metrics && project.metrics.length > 0 && (
           <div className="mt-8 grid grid-cols-3 gap-3">
             {project.metrics.map((m) => (
               <div key={m.label} className="rounded-xl border border-border/70 bg-card/60 p-4 text-center">
@@ -120,7 +122,7 @@ export default async function ProjectDetailPage({
           </div>
         )}
 
-        {project.highlights.length > 0 && (
+        {project.highlights && project.highlights.length > 0 && (
           <section className="mt-10">
             <h2 className="text-xl font-semibold">Highlights</h2>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -148,16 +150,18 @@ export default async function ProjectDetailPage({
           </div>
         )}
 
-        <section className="mt-10">
-          <h2 className="text-xl font-semibold">Technologies</h2>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {project.technologies.map((tech) => (
-              <span key={tech} className="rounded-md border border-border/60 bg-secondary/40 px-3 py-1 font-mono text-sm text-foreground/80">
-                {tech}
-              </span>
-            ))}
-          </div>
-        </section>
+        {project.technologies && project.technologies.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-xl font-semibold">Technologies</h2>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {project.technologies.map((tech) => (
+                <span key={tech} className="rounded-md border border-border/60 bg-secondary/40 px-3 py-1 font-mono text-sm text-foreground/80">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
       <Footer />
     </div>

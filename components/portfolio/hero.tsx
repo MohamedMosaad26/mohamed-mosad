@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import Image from 'next/image'
 import { ArrowRight, Github, Linkedin, MapPin, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { profile } from '@/lib/portfolio-data'
+import { profile as defaultProfile, type Profile } from '@/lib/portfolio-data'
 import { NeuralBackground } from './neural-background'
 
 const container = {
@@ -16,7 +16,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
 }
 
-export function Hero() {
+export function Hero({ profile = defaultProfile }: { profile?: Profile }) {
   return (
     <section id="home" className="relative flex min-h-svh items-center overflow-hidden pt-16">
       <NeuralBackground className="pointer-events-none absolute inset-0 h-full w-full opacity-70" />
@@ -40,7 +40,7 @@ export function Hero() {
           </motion.span>
 
           <motion.h1 variants={item} className="text-balance text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-            Hi, I&apos;m <span className="text-primary text-glow">Mohamed Mosad</span>
+            Hi, I&apos;m <span className="text-primary text-glow">{profile.name}</span>
           </motion.h1>
 
           <motion.p variants={item} className="text-pretty text-xl font-medium text-foreground/90 sm:text-2xl">
@@ -48,7 +48,7 @@ export function Hero() {
           </motion.p>
 
           <motion.p variants={item} className="max-w-xl text-pretty leading-relaxed text-muted-foreground">
-            I build intelligent solutions using Machine Learning, Data, and Software Engineering.
+            {profile.bio}
           </motion.p>
 
           <motion.div variants={item} className="flex flex-wrap items-center gap-3">
