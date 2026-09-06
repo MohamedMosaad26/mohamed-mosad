@@ -1,47 +1,44 @@
-export default function Page() {
+import { About } from '@/components/portfolio/about'
+import { Achievements } from '@/components/portfolio/achievements'
+import { Certifications } from '@/components/portfolio/certifications'
+import { Contact } from '@/components/portfolio/contact'
+import { ExperienceTimeline } from '@/components/portfolio/experience'
+import { Footer } from '@/components/portfolio/footer'
+import { Hero } from '@/components/portfolio/hero'
+import { Navbar } from '@/components/portfolio/navbar'
+import { Projects } from '@/components/portfolio/projects'
+import { Skills } from '@/components/portfolio/skills'
+import { certificates, experiences, profile, projects } from '@/lib/portfolio-data'
+
+export default function HomePage() {
   return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
+    <div className="relative min-h-svh">
+      <Navbar />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Projects projects={projects} />
+        <ExperienceTimeline experiences={experiences} />
+        <Achievements />
+        <Certifications certificates={certificates} />
+        <Contact />
+      </main>
+      <Footer />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Person',
+            name: profile.name,
+            jobTitle: profile.title,
+            email: `mailto:${profile.email}`,
+            address: { '@type': 'PostalAddress', addressLocality: profile.location },
+            sameAs: [profile.githubUrl, profile.linkedinUrl],
+          }),
         }}
-      >
-        Your v0 generation will show here.
-      </p>
-    </main>
+      />
+    </div>
   )
 }
